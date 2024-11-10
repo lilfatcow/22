@@ -1,0 +1,4 @@
+extends: spectral/monite.all.yaml
+formats:
+  - oas3
+  - oas3.1

@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: Monite API Test Spec
+  version: 1.0.0
+  description: Test specification for Monite API integration
+
+servers:
+  - url: https://api.sandbox.monite.com/v1
+    description: Monite Sandbox Environment
+
+paths:
+  /auth/token:
+    post:
+      summary: Obtain access token
+      description: Exchange client credentials for an access token
+      operationId: getToken
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - grant_type
+                - client_id
+                - client_secret
+              properties:
+                grant_type:
+                  type: string
+                  enum: [client_credentials]
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                  expires_in:
+                    type: integer
+
+  /entities:
+    get:
+      summary: List entities
+      description: Retrieve all entities associated with the authenticated client
+      operationId: listEntities
+      tags:
+        - Entities
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of entities
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

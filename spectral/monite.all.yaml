@@ -1,0 +1,36 @@
+extends: spectral:oas
+rules:
+  operation-success-response:
+    description: Operations must have at least one 2xx or 3xx response
+    severity: error
+    given: $.paths[*][*]
+    then:
+      field: responses
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          properties:
+            responses:
+              type: object
+              patternProperties:
+                "^[23]\\d{2}$": {}
+              minProperties: 1
+              
+  operation-description:
+    description: Operation must have a description
+    severity: error
+    given: $.paths[*][*]
+    then:
+      field: description
+      function: truthy
+
+  no-x-headers:
+    description: Headers should not use X- prefix
+    severity: warn
+    given: $..parameters[?(@.in === 'header')]
+    then:
+      field: name
+      function: pattern
+      functionOptions:
+        notPattern: ^x-
